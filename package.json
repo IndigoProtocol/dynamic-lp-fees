@@ -1,0 +1,33 @@
+{
+  "name": "cardano-bot-template",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsup src/index.ts --minify --format esm,cjs --dts --clean --tsconfig tsconfig.build.json",
+    "start": "pnpm build && node dist/index",
+    "type-check": "tsc --noEmit",
+    "lint": "pnpm eslint .",
+    "format": "pnpm prettier --write src/ tests/",
+    "format:check": "pnpm prettier --check src/ tests/",
+    "test": "vitest run"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.18.1",
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/node": "^24.10.1",
+    "eslint": "^9.39.1",
+    "prettier": "^3.6.2",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.48.0",
+    "vitest": "^4.0.13"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "winston": "^3.18.3"
+  }
+}
