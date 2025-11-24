@@ -1,7 +1,7 @@
 {
-  "name": "cardano-bot-template",
+  "name": "dynamic-lp-fees",
   "version": "1.0.0",
-  "description": "",
+  "description": "Dynamic LP Fee Calculator for Stablepool LP fees",
   "main": "index.js",
   "scripts": {
     "build": "tsup src/index.ts --minify --format esm,cjs --dts --clean --tsconfig tsconfig.build.json",
@@ -27,7 +27,9 @@
     "vitest": "^4.0.13"
   },
   "dependencies": {
+    "@anastasia-labs/cardano-multiplatform-lib-nodejs": "6.0.2-3",
     "dotenv": "^17.2.3",
+    "@lucid-evolution/lucid": "^0.4.29",
     "winston": "^3.18.3"
   }
 }
