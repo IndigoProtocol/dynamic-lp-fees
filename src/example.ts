@@ -24,7 +24,7 @@ async function main() {
 
   lucid.selectWallet.fromSeed(seed);
 
-  const tx = await updatePoolFeeTx(lucid, {
+  const tx = updatePoolFeeTx(lucid, {
     managerAddress: walletAddr,
     poolLPAsset: poolLPAsset,
     newFeeA: 0.9,
@@ -37,4 +37,4 @@ async function main() {
   console.log('Transaction submitted successfully: ', txHash);
 }
 
-main();
+void main();
