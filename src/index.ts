@@ -9,6 +9,8 @@ initLogger(process.env.LOG_LEVEL!);
 
 getLogger().info('Bot starting up...');
 
-runBotLoop().catch((error) => {
-  getLogger().error(`Error during bot: ${error}`, () => process.exit(1));
+runBotLoop().catch((error: Error) => {
+  getLogger().error(`Error during bot: ${error}`);
+  getLogger().error(`Stack trace: ${error.stack}`);
+  process.exit(1);
 });
