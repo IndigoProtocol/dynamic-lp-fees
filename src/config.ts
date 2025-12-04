@@ -119,6 +119,16 @@ export function validateConfig(): void {
   }
 }
 
+export function getMinswapApiUrl(): string {
+  if (config.NETWORK === 'Preprod') {
+    return `https://api-preprod.minswap.org/v1`;
+  }
+  if (config.NETWORK === 'Mainnet') {
+    return `https://api-mainnet-prod.minswap.org/v1`;
+  }
+  throw new Error(`Unsupported network: ${config.NETWORK}`);
+}
+
 export const ALL_LOG_LEVELS = {
   error: 0,
   warn: 1,

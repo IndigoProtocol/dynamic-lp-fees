@@ -1,5 +1,5 @@
-import { Kupmios, Lucid, LucidEvolution } from '@lucid-evolution/lucid';
-import { config } from './config.js';
+import { fromText, Kupmios, Lucid, LucidEvolution } from '@lucid-evolution/lucid';
+import { config, getMinswapApiUrl } from './config.js';
 
 export async function lucidFromConfig(): Promise<LucidEvolution> {
   // Initialize Lucid using Kupo and Ogmios
@@ -65,7 +65,7 @@ export async function getPoolPriceAt(
   const start = atMinute - 60 * 60 * 2; // 2 hours before the timestamp
   const end = atMinute + 60 * 60 * 2; // 2 hours after the timestamp
   const response = await fetch(
-    `https://api-mainnet-prod.minswap.org/v1/pools/${poolId}/price/candlestick?interval=1h&start_time=${Math.floor(start * 1000)}&end_time=${Math.floor(end * 1000)}`,
+    `${getMinswapApiUrl()}/pools/${poolId}/price/candlestick?interval=1h&start_time=${Math.floor(start * 1000)}&end_time=${Math.floor(end * 1000)}`,
   );
   if (!response.ok) {
     throw new Error(`Failed to get pool price: ${response.statusText}`);
@@ -101,6 +101,32 @@ export async function getPoolPriceAt(
   }
 
   return candle.close;
+}
+
+export async function getPoolTradingFees(poolId: string): Promise<{ buyFee: number; sellFee: number }> {
+  const response = await fetch(
+    `${getMinswapApiUrl()}/pools/${poolId}/metrics`,
+  );
+  if (!response.ok) {
+    throw new Error(`Failed to get pool trading fees: ${response.statusText}`);
+  }
+
+  const data = (await response.json()) as {
+    asset_a: {token_name: string;};
+    asset_b: {token_name: string;};
+    trading_fee_tier: number[];
+  };
+
+  // Buy Fee is when you are buying the asset.
+  // Sell Fee is when you are selling the asset.
+  if (data.asset_a.token_name === fromText(config.INDIGO_ASSET_NAME)) {
+    return { buyFee: data.trading_fee_tier[1], sellFee: data.trading_fee_tier[0] };
+  }
+  if (data.asset_b.token_name === fromText(config.INDIGO_ASSET_NAME)) {
+    return { buyFee: data.trading_fee_tier[0], sellFee: data.trading_fee_tier[1] };
+  }
+
+  throw new Error(`Unable to determine trading fees for pool: ${poolId}`);
 }
 
 export function timestampToEpoch(timestamp: number): number {
