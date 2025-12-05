@@ -34,6 +34,7 @@ export interface Config {
   INDIGO_ANALYTICS_API_TLS: boolean;
 
   MINSWAP_POOL_ID: string;
+  MINSWAP_PUBLISH_POOL_ID: string;
   INDIGO_ASSET_NAME: string;
 }
 
@@ -59,6 +60,7 @@ export const config: Config = {
   INDIGO_ANALYTICS_API_TLS: process.env.INDIGO_ANALYTICS_API_TLS === 'true',
 
   MINSWAP_POOL_ID: process.env.MINSWAP_POOL_ID || '',
+  MINSWAP_PUBLISH_POOL_ID: process.env.MINSWAP_PUBLISH_POOL_ID || process.env.MINSWAP_POOL_ID || '',
   INDIGO_ASSET_NAME: process.env.INDIGO_ASSET_NAME || '',
 };
 
@@ -117,16 +119,6 @@ export function validateConfig(): void {
       `SEED_PHRASE must contain exactly 24 words, found ${wordCount} words`,
     );
   }
-}
-
-export function getMinswapApiUrl(): string {
-  if (config.NETWORK === 'Preprod') {
-    return `https://api-preprod.minswap.org/v1`;
-  }
-  if (config.NETWORK === 'Mainnet') {
-    return `https://api-mainnet-prod.minswap.org/v1`;
-  }
-  throw new Error(`Unsupported network: ${config.NETWORK}`);
 }
 
 export const ALL_LOG_LEVELS = {

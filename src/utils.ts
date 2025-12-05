@@ -1,5 +1,5 @@
 import { fromText, Kupmios, Lucid, LucidEvolution } from '@lucid-evolution/lucid';
-import { config, getMinswapApiUrl } from './config.js';
+import { config } from './config.js';
 
 export async function lucidFromConfig(): Promise<LucidEvolution> {
   // Initialize Lucid using Kupo and Ogmios
@@ -65,7 +65,7 @@ export async function getPoolPriceAt(
   const start = atMinute - 60 * 60 * 2; // 2 hours before the timestamp
   const end = atMinute + 60 * 60 * 2; // 2 hours after the timestamp
   const response = await fetch(
-    `${getMinswapApiUrl()}/pools/${poolId}/price/candlestick?interval=1h&start_time=${Math.floor(start * 1000)}&end_time=${Math.floor(end * 1000)}`,
+    `https://api-mainnet-prod.minswap.org/v1/pools/${poolId}/price/candlestick?interval=1h&start_time=${Math.floor(start * 1000)}&end_time=${Math.floor(end * 1000)}`,
   );
   if (!response.ok) {
     throw new Error(`Failed to get pool price: ${response.statusText}`);
@@ -105,7 +105,7 @@ export async function getPoolPriceAt(
 
 export async function getPoolTradingFees(poolId: string): Promise<{ buyFee: number; sellFee: number }> {
   const response = await fetch(
-    `${getMinswapApiUrl()}/pools/${poolId}/metrics`,
+    `https://api-mainnet-prod.minswap.org/v1/pools/${poolId}/metrics`,
   );
   if (!response.ok) {
     throw new Error(`Failed to get pool trading fees: ${response.statusText}`);

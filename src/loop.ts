@@ -56,8 +56,8 @@ export async function runBotLoop(): Promise<void> {
       const address = await lucid.wallet().address();
 
       const poolLPAsset = {
-        policyId: config.MINSWAP_POOL_ID.split('.')[0],
-        tokenName: config.MINSWAP_POOL_ID.split('.')[1],
+        policyId: config.MINSWAP_PUBLISH_POOL_ID.split('.')[0],
+        tokenName: config.MINSWAP_PUBLISH_POOL_ID.split('.')[1],
       };
 
       const tx = updatePoolFeeTx(lucid, {
