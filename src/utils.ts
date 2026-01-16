@@ -68,7 +68,7 @@ export async function getPoolPriceAt(
     `https://api-mainnet-prod.minswap.org/v1/pools/${poolId}/price/candlestick?interval=1h&start_time=${Math.floor(start * 1000)}&end_time=${Math.floor(end * 1000)}`,
   );
   if (!response.ok) {
-    throw new Error(`Failed to get pool price: ${response.statusText}`);
+    throw new Error(`Failed to get pool price for ${poolId} at ${start} to ${end}: ${response.statusText}`);
   }
 
   const data = (await response.json()) as {

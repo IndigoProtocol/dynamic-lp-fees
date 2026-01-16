@@ -39,8 +39,8 @@ export async function runBotLoop(): Promise<void> {
     // MROUND: rounds quotient to the nearest multiple of roundTo (could be 0)
     const ratio = roundTo === 0 ? 0 : Math.round(quotient / roundTo) * roundTo;
 
-    const buyFee = Math.max(Math.min(ratio * 0.02, 0.02), 0.0005) * 100;
-    const sellFee = Math.max(Math.min(ratio * -0.02, 0.02), 0.0005) * 100;
+    const buyFee = Number((Math.max(Math.min(ratio * 0.02, 0.02), 0.0005) * 100).toFixed(2));
+    const sellFee = Number((Math.max(Math.min(ratio * -0.02, 0.02), 0.0005) * 100).toFixed(2));
 
     getLogger().debug(`Average deviation: ${averageDeviation}, Ratio: ${ratio}, Buy Fee: ${buyFee}%, Sell Fee: ${sellFee}%`);
 
@@ -52,32 +52,36 @@ export async function runBotLoop(): Promise<void> {
     if (currentBuyFee !== buyFee || currentSellFee !== sellFee) {
       getLogger().info(`Updating fees from ${currentBuyFee}, ${currentSellFee} to ${buyFee}, ${sellFee}`);
 
-      const lucid = await lucidFromConfig();
-      const address = await lucid.wallet().address();
+      if (config.ALLOW_PUBLISH) {
+        const lucid = await lucidFromConfig();
+        const address = await lucid.wallet().address();
 
-      const poolLPAsset = {
-        policyId: config.MINSWAP_PUBLISH_POOL_ID.split('.')[0],
-        tokenName: config.MINSWAP_PUBLISH_POOL_ID.split('.')[1],
-      };
+        const poolLPAsset = {
+          policyId: config.MINSWAP_PUBLISH_POOL_ID.split('.')[0],
+          tokenName: config.MINSWAP_PUBLISH_POOL_ID.split('.')[1],
+        };
 
-      const tx = updatePoolFeeTx(lucid, {
-        managerAddress: address,
-        poolLPAsset: poolLPAsset,
-        newFeeA: buyFee,
-        newFeeB: sellFee,
-      });
+        const tx = updatePoolFeeTx(lucid, {
+          managerAddress: address,
+          poolLPAsset: poolLPAsset,
+          newFeeA: buyFee,
+          newFeeB: sellFee,
+        });
 
-      const txComplete = await tx.complete();
-      const signedTx = await txComplete.sign.withWallet().complete();
+        const txComplete = await tx.complete();
+        const signedTx = await txComplete.sign.withWallet().complete();
 
-      const txHash = await signedTx.submit();
-      getLogger().info(`Transaction submitted successfully: ${txHash}, awaiting confirmation...`);
+        const txHash = await signedTx.submit();
+        getLogger().info(`Transaction submitted successfully: ${txHash}, awaiting confirmation...`);
 
-      await lucid.awaitTx(txHash);
+        await lucid.awaitTx(txHash);
 
-      getLogger().info(`Transaction confirmed: ${txHash}`);
+        getLogger().info(`Transaction confirmed: ${txHash}`);
+      } else {
+        getLogger().warn(`Skipping transaction... ALLOW_PUBLISH is disabled.`);
+      }
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 10_000)); // 10 seconds
+    await new Promise((resolve) => setTimeout(resolve, config.LOOP_INTERVAL)); // 10 seconds
   }
 }

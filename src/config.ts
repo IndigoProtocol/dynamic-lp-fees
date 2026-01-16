@@ -36,6 +36,10 @@ export interface Config {
   MINSWAP_POOL_ID: string;
   MINSWAP_PUBLISH_POOL_ID: string;
   INDIGO_ASSET_NAME: string;
+
+  ALLOW_PUBLISH: boolean;
+
+  LOOP_INTERVAL: number;
 }
 
 // Create and validate configuration object
@@ -62,6 +66,10 @@ export const config: Config = {
   MINSWAP_POOL_ID: process.env.MINSWAP_POOL_ID || '',
   MINSWAP_PUBLISH_POOL_ID: process.env.MINSWAP_PUBLISH_POOL_ID || process.env.MINSWAP_POOL_ID || '',
   INDIGO_ASSET_NAME: process.env.INDIGO_ASSET_NAME || '',
+
+  ALLOW_PUBLISH: process.env.ALLOW_PUBLISH === 'true',
+
+  LOOP_INTERVAL: parseInt(process.env.LOOP_INTERVAL || '10000', 10),
 };
 
 // Validate required configuration
